@@ -1,0 +1,395 @@
+; Autor: André Moreira
+alias temp v0
+alias snake_x v1
+alias snake_y v2
+alias apple_x v3
+alias apple_y v4
+alias keypad v5
+alias dly v6
+alias dir v7
+alias curr_idx v8
+alias next_idx v9
+alias snake_size va
+alias draw_x vb
+alias draw_y vc
+alias snd_timer vd
+alias is_dead ve
+
+start_screen:
+    cls
+    
+    ld draw_y, 11
+
+    ld draw_x, 20
+    ld i, p_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 25
+    ld i, r_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 30
+    ld i, e_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 35
+    ld i, s_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 40
+    ld i, s_char
+    drw draw_x, draw_y, 4
+
+    ld draw_y, 17
+
+    ld draw_x, 15
+    ld i, a_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 20
+    ld i, n_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 25
+    ld i, y_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 35
+    ld i, k_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 40
+    ld i, e_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 45
+    ld i, y_char
+    drw draw_x, draw_y, 4
+
+    ld temp, k
+
+; --- Main Game ---
+init_game:
+    ld is_dead, 0
+    ld snake_size, 3
+    ld snake_x, 4
+    ld snake_y, 20
+    ld apple_x, 44
+    ld apple_y, 24
+    ld dir, 2
+
+    ld i, body_x
+    ld temp, snake_x
+    ld [i], temp
+    
+    ld i, body_y
+    ld temp, snake_y
+    ld [i], temp
+
+game_loop:
+    call controls
+    call shift_body
+    call snake_dir
+    
+    ; Screen wrap around checks
+    sne snake_x, 252
+    ld snake_x, 60
+    
+    sne snake_x, 64
+    ld snake_x, 0
+    
+    sne snake_y, 252
+    ld snake_y, 28
+    
+    sne snake_y, 32
+    ld snake_y, 0
+
+    ; Save new head position to array index 0
+    ld i, body_x
+    ld temp, snake_x
+    ld [i], temp
+    
+    ld i, body_y
+    ld temp, snake_y
+    ld [i], temp
+
+    call check_self_collision
+    
+    ; If dead, break loop
+    sne is_dead, 1
+    jp game_over
+
+    call check_colision
+    call draw_game
+    call wait_delay
+    jp game_loop
+
+game_over:
+    cls
+    
+    ld snd_timer, 10
+    ld st, snd_timer
+
+    ld draw_y, 10
+
+    ld draw_x, 10
+    ld i, g_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 15
+    ld i, a_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 20
+    ld i, m_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 25
+    ld i, e_char
+    drw draw_x, draw_y, 4
+    
+    ld draw_y, 16
+
+    ld draw_x, 10
+    ld i, o_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 15
+    ld i, v_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 20
+    ld i, e_char
+    drw draw_x, draw_y, 4
+
+    ld draw_x, 25
+    ld i, r_char
+    drw draw_x, draw_y, 4
+
+    ld temp, k
+    jp init_game
+
+
+; --- Functions ---
+
+check_self_collision:
+    ld curr_idx, 1
+self_col_loop:
+    se curr_idx, snake_size
+    jp self_col_check
+    ret
+
+self_col_check:
+    ld i, body_x
+    add i, curr_idx
+    ld temp, [i]
+    ld draw_x, temp
+    
+    ld i, body_y
+    add i, curr_idx
+    ld temp, [i]
+    ld draw_y, temp
+    
+    sne snake_x, draw_x
+    jp self_col_y_check
+    jp self_col_next
+
+self_col_y_check:
+    sne snake_y, draw_y
+    ld is_dead, 1
+    
+    se is_dead, 1
+    jp self_col_next
+    ret
+
+self_col_next:
+    add curr_idx, 1
+    jp self_col_loop
+
+
+shift_body:
+    ld curr_idx, snake_size
+    add curr_idx, 255 ; same as curr_idx -= 1
+    
+shift_loop:
+    ld next_idx, curr_idx
+    add next_idx, 1
+    
+    ld i, body_x
+    add i, curr_idx
+    ld temp, [i]
+    
+    ld i, body_x
+    add i, next_idx
+    ld [i], temp
+    
+    ld i, body_y
+    add i, curr_idx
+    ld temp, [i]
+    
+    ld i, body_y
+    add i, next_idx
+    ld [i], temp
+    
+    se curr_idx, 0
+    jp continue_shift
+    ret
+
+continue_shift:
+    add curr_idx, 255 ; curr_idx -= 1
+    jp shift_loop
+
+
+draw_game:
+    cls
+    
+    ld i, apple
+    drw apple_x, apple_y, 4
+
+    ld curr_idx, 1
+draw_loop:
+    se curr_idx, snake_size
+    jp draw_body
+    jp draw_head
+    
+draw_body:
+    ld i, body_x
+    add i, curr_idx
+    ld temp, [i]
+    ld draw_x, temp
+    
+    ld i, body_y
+    add i, curr_idx
+    ld temp, [i]
+    ld draw_y, temp
+    
+    ld i, snake
+    drw draw_x, draw_y, 4
+    
+    add curr_idx, 1
+    jp draw_loop
+
+draw_head:
+    ld i, snake
+    drw snake_x, snake_y, 4
+    ret
+
+
+snake_dir:
+    sne dir, 1
+    add snake_x, 252
+    
+    sne dir, 2
+    add snake_x, 4
+    
+    sne dir, 3
+    add snake_y, 252
+    
+    sne dir, 4
+    add snake_y, 4
+    
+    ret
+
+
+spawn_apple:
+    rnd apple_x, 0x3C
+    rnd apple_y, 0x1C
+    ret
+
+
+check_colision:
+    sne snake_x, apple_x
+    jp check_col_y
+    ret
+
+check_col_y:
+    sne snake_y, apple_y
+    jp consume_apple
+    ret
+
+consume_apple:
+    ld snd_timer, 3
+    ld st, snd_timer
+    add snake_size, 1
+    call spawn_apple
+    ret
+
+
+controls:
+    ld keypad, 5
+    skp keypad
+    jp skip_up
+    sne dir, 4
+    jp skip_up
+    ld dir, 3
+
+skip_up:
+    ld keypad, 8
+    skp keypad
+    jp skip_down
+    sne dir, 3
+    jp skip_down
+    ld dir, 4
+
+skip_down:
+    ld keypad, 7
+    skp keypad
+    jp skip_left
+    sne dir, 2
+    jp skip_left
+    ld dir, 1
+
+skip_left:
+    ld keypad, 9
+    skp keypad
+    jp skip_right
+    sne dir, 1
+    jp skip_right
+    ld dir, 2
+
+skip_right:
+
+    ret
+
+wait_delay:
+    ld dly, dt
+    se dly, 0
+    jp wait_delay
+    
+    ld dly, 1
+    ld dt, dly
+    ret
+
+
+; --- Sprites Data ---
+spr s_char: 0xF0 0x80 0x10 0xF0
+spr n_char: 0x90 0xD0 0xB0 0x90
+spr k_char: 0x90 0xA0 0xC0 0x90
+spr p_char: 0xE0 0xA0 0xE0 0x80
+spr y_char: 0xA0 0xA0 0x40 0x40
+spr g_char: 0x60 0x80 0xA0 0x60
+spr a_char: 0x40 0xA0 0xF0 0xA0
+spr m_char: 0xF0 0xA0 0xA0 0xA0
+spr e_char: 0xF0 0x80 0xE0 0xF0
+spr o_char: 0x60 0xA0 0xA0 0x60
+spr v_char: 0xA0 0xA0 0xA0 0x40
+spr r_char: 0xE0 0xA0 0xC0 0xA0
+
+spr snake: 0xF0 0xF0 0xF0 0xF0
+spr apple: 0xF0 0xF0 0xF0 0xF0
+
+spr body_x: 0x04 0x04 0x04 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+
+spr body_y: 0x14 0x14 0x14 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00
+0x00 0x00 0x00 0x00 0x00 0x00 0x00

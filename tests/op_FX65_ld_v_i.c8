@@ -1,0 +1,7 @@
+test:
+    ld i, map_data
+    ld v2, [i]
+    jp test
+
+spr map_data: 
+    0x11 0x22 0x33

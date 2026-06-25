@@ -1,0 +1,11 @@
+start:
+    ld v0, 0x00
+    call my_func
+    jp done
+
+my_func:
+    ld v0, 0xFF
+    ret
+
+done:
+    cls

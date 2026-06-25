@@ -1,0 +1,7 @@
+ld v0, 0x01
+ld v1, 0x02
+ld v2, 0x03
+
+test:
+    ld [i], v2
+    jp test

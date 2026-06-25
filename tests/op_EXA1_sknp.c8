@@ -1,0 +1,7 @@
+ld v0, 0x0A
+test:
+    sknp v0
+    jp skip_no_press
+    ld v1, 0x01
+skip_no_press:
+    jp test

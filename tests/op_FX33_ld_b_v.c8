@@ -1,0 +1,7 @@
+ld v1, 123
+test:
+    ld i, buf
+    ld b, v1
+    jp test
+
+spr buf: 0x00

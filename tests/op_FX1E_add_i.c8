@@ -1,0 +1,7 @@
+ld v1, 0x05
+test:
+    ld i, square
+    add i, v1
+    jp test
+
+spr square: 0xF0 0xF0 0xF0 0xF0

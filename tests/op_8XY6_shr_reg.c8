@@ -1,0 +1,4 @@
+ld v1, 0x04
+test:
+    shr v1, v1
+    jp test

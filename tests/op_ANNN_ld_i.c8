@@ -1,0 +1,6 @@
+test:
+    ld i, my_data
+    jp test
+
+spr my_data:
+    0xDE 0xAD

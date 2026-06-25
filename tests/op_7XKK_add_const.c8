@@ -1,0 +1,7 @@
+ld v1, 0x05
+ld v2, 100
+
+test:
+    add v1, 0x0A
+    add v2, 206
+    jp test

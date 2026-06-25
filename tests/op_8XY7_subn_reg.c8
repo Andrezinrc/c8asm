@@ -1,0 +1,6 @@
+ld v1, 5
+ld v2, 8
+
+test:
+    subn v1, v2
+    jp test

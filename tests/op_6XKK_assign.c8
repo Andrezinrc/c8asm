@@ -1,0 +1,5 @@
+test:
+    ld v0, 0x42
+    ld va, 255
+    ld vf, 0x00
+    jp test

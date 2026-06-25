@@ -1,0 +1,6 @@
+ld v5, 0x20
+ld v6, 0x10
+
+test:
+    sub v5, v6
+    jp test

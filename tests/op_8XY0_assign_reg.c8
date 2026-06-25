@@ -1,0 +1,5 @@
+ld v1, 0xAA
+
+test:
+    ld v2, v1
+    jp test

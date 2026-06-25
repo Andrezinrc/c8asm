@@ -1,0 +1,8 @@
+ld v1, 0x10
+ld v2, 0x20
+test:
+    sne v1, v2
+    jp skip_block
+    ld v3, 0x01
+skip_block:
+    jp test

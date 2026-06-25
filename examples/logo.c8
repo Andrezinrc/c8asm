@@ -1,0 +1,27 @@
+; Autor: André Moreira
+alias temp   v0
+alias draw_x v1
+alias draw_y v2
+
+main:
+    cls
+    
+    ld draw_y, 12
+
+    ld draw_x, 16
+    ld i, char_c
+    drw draw_x, draw_y, 8
+
+    ld draw_x, 28
+    ld i, char_8
+    drw draw_x, draw_y, 8
+
+    ld draw_x, 40
+    ld i, char_c
+    drw draw_x, draw_y, 8
+
+    ld v3, k
+    jp main
+
+spr char_c: 0xFC 0xFC 0xC0 0xC0 0xC0 0xC0 0xFC 0xFC
+spr char_8: 0x7E 0xC3 0xC3 0x7E 0x7E 0xC3 0xC3 0x7E

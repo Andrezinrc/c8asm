@@ -1,0 +1,9 @@
+call subroutine
+    jp done
+
+subroutine:
+    ld v0, 0x01
+    ret
+
+done:
+    ld v1, 0x02

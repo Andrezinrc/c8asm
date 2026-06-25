@@ -1,0 +1,4 @@
+test:
+    rnd v1, 0xFF
+    rnd v2, 0x0F
+    jp test

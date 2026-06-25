@@ -1,0 +1,3 @@
+test:
+    ld v1, k
+    jp test
