@@ -18,7 +18,7 @@ static void reset_assembler_pass(int pass)
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
-        printf("%s <source.c8> <output.ch8>\n", argv[0]);
+        printf("./c8asm source.c8 output.ch8\n");
         return 1;
     }
 
