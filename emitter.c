@@ -7,10 +7,13 @@
 
 void emit_instruction(uint16_t op)
 {
+	// An instruction occupies two bytes in the chip8 rom
     if ((state.pc - ROM_START_ADDRESS) + 1 >= MAX_ROM_SIZE) {
         fprintf(stderr, "[ERROR] ROM limit exceeded.\n");
         exit(1);
     }
+
+	// The emulator later joins these two bytes back into one 16-bit opcode
     state.rom[state.pc - ROM_START_ADDRESS] = (op >> 8) & 0xFF;
     state.rom[state.pc - ROM_START_ADDRESS + 1] = op & 0xFF;
     state.pc += 2;
@@ -28,6 +31,8 @@ void emit_byte(uint8_t byte)
 
 
 // Instruction Handles
+// Each handler turns parsed operands into the 16-bit layout expected
+// by the chip8 CPU, then leaves byte emission to emit_instruction()
 
 void handle_cls(FILE *src, const char *mnemonic)
 {
@@ -83,9 +88,12 @@ void handle_se_sne(FILE *src, const char *mnemonic)
 
     if (IS_REG(op2)) {
         int regY = PARSE_REG(op2);
+
+		// Register form: 5XY0 / 9XY0
         uint16_t prefix = (strcmp(mnemonic, "se") == 0) ? 0x5000 : 0x9000;
         emit_instruction(prefix | (regX << 8) | (regY << 4));
     } else {
+		// Immediate form: 3XKK / 4XKK
         uint8_t val = (uint8_t)strtol(op2, NULL, 0);
         uint16_t prefix = (strcmp(mnemonic, "se") == 0) ? 0x3000 : 0x4000;
         emit_instruction(prefix | (regX << 8) | val);
@@ -100,6 +108,8 @@ void handle_skp_sknp(FILE *src, const char *mnemonic)
         error_invalid_reg(mnemonic);
     
     int regX = PARSE_REG(op);
+
+	// EX9E skips on key press; EXA1 skips when the key is not pressed
     uint16_t suffix = (strcmp(mnemonic, "skp") == 0) ? 0x009E : 0x00A1;
     emit_instruction(0xE000 | (regX << 8) | suffix);
 }
@@ -194,7 +204,7 @@ void handle_alu(FILE *src, const char *mnemonic)
         error_invalid_reg(mnemonic);
     
     int regX = PARSE_REG(op1);
-    // If 2nd operand is missing, default to regX for shifts
+	// Shifts may omit the 2nd operand; use regX as the source
     int regY = (op2[0] != '\0') ? PARSE_REG(op2) : regX;
 
     uint16_t suffix = 0;

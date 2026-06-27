@@ -53,6 +53,7 @@ int next_token_resolved(FILE *f, char *token_buffer, int max_size)
 
     str_to_lower(token_buffer);
 
+    // Resolve aliases early so handlers only deal with real registers
     for (int i = 0; i < state.alias_count; i++)
         if (strcmp(token_buffer, state.aliases[i].name) == 0) {
             strncpy(token_buffer, state.aliases[i].reg_id, max_size - 1);

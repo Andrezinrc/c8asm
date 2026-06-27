@@ -26,4 +26,10 @@ vim:
 	@cp c8asm-theme/ftdetect/chip8.vim $(HOME)/.vim/ftdetect/chip8.vim
 	@echo "Vim syntax configuration completed."
 
-.PHONY: all clean vim
+clean-vim:
+	@echo "Removing Vim syntax highlighting..."
+	@rm -f $(HOME)/.vim/syntax/chip8.vim
+	@rm -f $(HOME)/.vim/ftdetect/chip8.vim
+	@echo "Vim syntax configuration removed."
+
+.PHONY: all clean vim clean-vim
