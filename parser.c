@@ -11,7 +11,8 @@
 void validate_identifier(const char *name, const char *context)
 {
     if (is_reserved_keyword(name)) {
-        fprintf(stderr, "[ERROR] line %d: '%s' is a reserved keyword and cannot be used as a %s name.\n", state.current_line, name, context);
+        fprintf(stderr, "[ERROR] line %d: '%s' is a reserved keyword and cannot be used as a %s name.\n",
+				state.current_line, name, context);
         exit(1);
     }
 }
@@ -80,7 +81,8 @@ uint16_t resolve_address(const char *target)
     
     int16_t label_addr = find_label(target);
     if (label_addr == -1 && state.pass == 2) {
-        fprintf(stderr, "[ERROR] line %d: undefined label '%s'\n", state.current_line, target);
+        fprintf(stderr, "[ERROR] line %d: undefined label '%s'\n",
+				state.current_line, target);
         exit(1);
     }
     return (label_addr == -1) ? 0x000 : (uint16_t)label_addr;
@@ -110,7 +112,8 @@ static void parse_alias_directive(FILE *src)
         validate_identifier(name, "alias");
 
         if (!IS_REG(reg)) {
-            fprintf(stderr, "[ERROR] line %d: alias destination '%s' must be a valid register\n", state.current_line, reg);
+            fprintf(stderr, "[ERROR] line %d: alias destination '%s' must be a valid register\n",
+					state.current_line, reg);
             exit(1);
         }
 
@@ -153,19 +156,13 @@ static void parse_sprite_directive(FILE *src)
 
 void error_invalid_reg(const char *mnemonic)
 {
-    fprintf(stderr, "[ERROR] line %d: Invalid register operand for '%s'.\n", state.current_line, mnemonic);
+    fprintf(stderr, "[ERROR] line %d: Invalid register operand for '%s'.\n",
+			state.current_line, mnemonic);
     exit(1);
 }
 
 
 // Dispatch Table
-
-typedef void (*InstructionHandler)(FILE *src, const char *mnemonic);
-
-typedef struct {
-    const char *mnemonic;
-    InstructionHandler handler;
-} InstructionDef;
 
 static const InstructionDef INSTRUCTIONS[] = {
     {"cls", handle_cls},
@@ -198,7 +195,8 @@ static void parse_instruction(FILE *src, const char *mnemonic)
             return;
         }
 
-    fprintf(stderr, "[ERROR] line %d: Unknown mnemonic '%s'.\n", state.current_line, mnemonic);
+    fprintf(stderr, "[ERROR] line %d: Unknown mnemonic '%s'.\n",
+			state.current_line, mnemonic);
     exit(1);
 }
 
@@ -210,7 +208,8 @@ void parse_source(FILE *src)
         size_t len = strlen(token);
 
 #if PDEBUG
-        printf("[DEBUG] Pass: %d | Token read: '\033[1;37m%s\033[0m'\n", state.pass, token);
+        printf("[DEBUG] Pass: %d | Token read: '\033[1;37m%s\033[0m'\n",
+				state.pass, token);
 #endif
 
         if (len > 0 && token[len - 1] == ':') {

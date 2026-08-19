@@ -90,13 +90,11 @@ void handle_se_sne(FILE *src, const char *mnemonic)
     if (IS_REG(op2)) {
         int regY = PARSE_REG(op2);
 
-		// Register form: 5XY0 / 9XY0
         if (strcmp(mnemonic, "se") == 0)
 			emit_instruction(encode_5xy0(regX, regY));
 		else
 			emit_instruction(encode_9xy0(regX, regY));
     } else {
-		// Immediate form: 3XKK / 4XKK
         uint8_t val = (uint8_t)strtol(op2, NULL, 0);
         if (strcmp(mnemonic, "se") == 0)
 			emit_instruction(encode_3xkk(regX, val));
