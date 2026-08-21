@@ -19,17 +19,15 @@ syn match chip8Num          '\v<\d+>'
 syn match chip8Label        '\v^[a-zA-Z_][a-zA-Z0-9_]*:'
 syn match chip8Comment      ';.*$'
 
-hi def link chip8Instruction     Statement
-hi def link chip8InstructionJump Keyword
-hi def link chip8Conditional     Conditional
-hi def link chip8Define          Define
-hi def link chip8Reg             Type
-hi def link chip8IndexReg        Special
-hi def link chip8MemRef          Special
-hi def link chip8SpecialReg      Identifier
-hi def link chip8Hex             Number
-hi def link chip8Num             Number
+hi def link chip8Instruction     Normal
+hi def link chip8InstructionJump Normal
+hi def link chip8Conditional     Normal
+hi def link chip8Define          Normal
+
+hi def link chip8Reg             Identifier
 hi def link chip8Label           Function
 hi def link chip8Comment         Comment
+hi def link chip8Hex             Number
+hi def link chip8Num             Number
 
 let b:current_syntax = "chip8"

@@ -14,9 +14,9 @@ for test_file in tests/*.c8; do
     hexdump -C "tests/$test.ch8" > "tests/current_$test.txt"
 
     if diff -q "tests/current_$test.txt" "tests/expected/$test.txt" > /dev/null 2>&1; then
-        echo -e "[${GREEN} PASS ${NC}] $test"
+        echo -e "[${GREEN}PASS${NC}] $test"
     else
-        echo -e "[${RED} FAIL ${NC}] $test"
+        echo -e "[${RED}FAIL${NC}] $test"
     fi
 
     rm -f "tests/current_$test.txt"
