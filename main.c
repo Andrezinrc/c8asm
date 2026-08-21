@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
     fwrite(state.rom, 1, bytes_written, out);
     fclose(out);
 
-    printf("\033[1;32mSuccess! \033[0m\033[1;37m%d tokens processed.\n%d bytes written to %s\033[0m\n",
+    printf("\033[1;32mSuccess! %d tokens processed.\n%d bytes written to %s\n",
 			state.token_count, bytes_written, argv[2]);
 
     return 0;

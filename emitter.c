@@ -92,13 +92,13 @@ void handle_se_sne(FILE *src, const char *mnemonic)
 
         if (strcmp(mnemonic, "se") == 0)
 			emit_instruction(encode_5xy0(regX, regY));
-		else
+        else
 			emit_instruction(encode_9xy0(regX, regY));
     } else {
         uint8_t val = (uint8_t)strtol(op2, NULL, 0);
         if (strcmp(mnemonic, "se") == 0)
 			emit_instruction(encode_3xkk(regX, val));
-		else
+        else
 			emit_instruction(encode_4xkk(regX, val));
     }
 }
@@ -115,7 +115,7 @@ void handle_skp_sknp(FILE *src, const char *mnemonic)
 	// EX9E skips on key press; EXA1 skips when the key is not pressed
     if (strcmp(mnemonic, "skp") == 0)
 		emit_instruction(encode_ex9e(regX));
-	else
+    else
 		emit_instruction(encode_exa1(regX));
 }
 
@@ -132,7 +132,7 @@ void handle_ld(FILE *src, const char *mnemonic)
     if (strcmp(op1, "dt") == 0) {
         if (!IS_REG(op2))
             error_invalid_reg(mnemonic);
-		int regX = PARSE_REG(op2);
+        int regX = PARSE_REG(op2);
         emit_instruction(encode_fx15(regX));
         return;
     }
@@ -140,27 +140,27 @@ void handle_ld(FILE *src, const char *mnemonic)
         if (!IS_REG(op2))
             error_invalid_reg(mnemonic);
         int regX = PARSE_REG(op2);
-		emit_instruction(encode_fx18(regX));
+        emit_instruction(encode_fx18(regX));
         return;
     }
     if (strcmp(op1, "f") == 0) {
         if (!IS_REG(op2))
             error_invalid_reg(mnemonic);
-		int regX = PARSE_REG(op2);
+        int regX = PARSE_REG(op2);
         emit_instruction(encode_fx29(regX));
         return;
     }
     if (strcmp(op1, "b") == 0) {
         if (!IS_REG(op2))
             error_invalid_reg(mnemonic);
-		int regX = PARSE_REG(op2);
+        int regX = PARSE_REG(op2);
         emit_instruction(encode_fx33(regX));
         return;
     }
     if (strcmp(op1, "[i]") == 0) {
         if (!IS_REG(op2))
             error_invalid_reg(mnemonic);
-		int regX = PARSE_REG(op2);
+        int regX = PARSE_REG(op2);
         emit_instruction(encode_fx55(regX));
         return;
     }
@@ -168,7 +168,7 @@ void handle_ld(FILE *src, const char *mnemonic)
     if (!IS_REG(op1))
         error_invalid_reg(mnemonic);
     int regX = PARSE_REG(op1);
-	uint8_t val = (uint8_t)strtol(op2, NULL, 0);
+    uint8_t val = (uint8_t)strtol(op2, NULL, 0);
 
     if      (strcmp(op2, "dt")  == 0)
         emit_instruction(encode_fx07(regX));

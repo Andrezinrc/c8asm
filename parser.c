@@ -2,11 +2,28 @@
 #include "lexer.h"
 #include "assembler.h"
 #include "emitter.h"
-#include "reserved_words.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
+const char *const RESERVED_WORDS[] = {
+    "cls", "ret", "sys", "jp", "call", "se", "sne", "ld",
+    "add", "or", "and", "xor", "sub", "shr", "subn", "shl",
+    "rnd", "drw", "skp", "sknp",
+    "spr", "alias", "i", "dt", "st", "f", "b", "[i]", "k",
+    "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", 
+    "v8", "v9", "va", "vb", "vc", "vd", "ve", "vf"
+};
+
+int is_reserved_keyword(const char *name)
+{
+    for (size_t i = 0; i < ARRAY_SIZE(RESERVED_WORDS); i++)
+        if (strcmp(name, RESERVED_WORDS[i]) == 0)
+            return 1;
+        
+    return 0;
+}
 
 void validate_identifier(const char *name, const char *context)
 {
@@ -208,7 +225,7 @@ void parse_source(FILE *src)
         size_t len = strlen(token);
 
 #if PDEBUG
-        printf("[DEBUG] Pass: %d | Token read: '\033[1;37m%s\033[0m'\n",
+        printf("[DEBUG] Pass: %d | Token read: '%s'\n",
 				state.pass, token);
 #endif
 
