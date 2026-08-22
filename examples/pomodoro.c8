@@ -1,0 +1,422 @@
+alias min_dez v0
+alias min_uni v1
+alias sec_dez v2
+alias sec_uni v3
+
+alias temp v4
+alias pos_x v5
+alias pos_y v6
+alias delay1 v7
+alias delay2 v8
+alias timer v9
+alias key va
+
+
+start:
+    call reset_work
+
+wait_work_start:
+    call wait_key
+    call work_countdown
+
+work_finished:
+    call beep_until_key
+    call reset_break
+    call break_countdown
+
+break_finished:
+    call beep_until_key
+    jp start
+
+
+wait_key:
+    ld key, k
+    ret
+
+work_countdown:
+work_loop:
+    cls
+    call draw_timer
+    call delay_one_sec
+    call dec_time
+
+    ld temp, min_dez
+    add temp, min_uni
+    add temp, sec_dez
+    add temp, sec_uni
+
+    se temp, 0
+    jp work_loop
+
+    cls
+    call draw_timer
+    ret
+
+; Run the 5-minute break
+break_countdown:
+break_loop:
+    cls
+    call draw_timer
+    call delay_one_sec
+    call dec_time
+
+    ld temp, min_dez
+    add temp, min_uni
+    add temp, sec_dez
+    add temp, sec_uni
+
+    se temp, 0
+    jp break_loop
+
+    cls
+    call draw_timer
+    ret
+
+; Keep beeping until a key is pressed
+beep_until_key:
+    ld key, 0
+
+beep_loop:
+    ld timer, 30
+    ld st, timer
+
+check_beep_key:
+    skp key
+    jp check_beep_timer
+
+    ld timer, 0
+    ld st, timer
+    ret
+
+check_beep_timer:
+    ld timer, st
+
+    se timer, 0
+    jp check_beep_key
+
+    ld key, 0
+    jp beep_loop
+
+
+delay_one_sec:
+    ld delay1, 10
+
+delay_outer:
+    ld delay2, 255
+
+delay_inner:
+    ld temp, 1
+    sub delay2, temp
+
+    se delay2, 0
+    jp delay_inner
+
+    ld temp, 1
+    sub delay1, temp
+
+    se delay1, 0
+    jp delay_outer
+
+    ret
+
+
+reset_work:
+    ld min_dez, 2
+    ld min_uni, 5
+    ld sec_dez, 0
+    ld sec_uni, 0
+    ret
+
+
+reset_break:
+    ld min_dez, 0
+    ld min_uni, 5
+    ld sec_dez, 0
+    ld sec_uni, 0
+    ret
+
+
+dec_time:
+    se sec_uni, 0
+    jp dec_sec_uni
+
+    se sec_dez, 0
+    jp dec_sec_dez
+
+    se min_uni, 0
+    jp dec_min_uni
+
+    se min_dez, 0
+    jp dec_min_dez
+
+    ret
+
+
+dec_sec_uni:
+    ld temp, 1
+    sub sec_uni, temp
+    ret
+
+
+dec_sec_dez:
+    ld sec_uni, 9
+    ld temp, 1
+    sub sec_dez, temp
+    ret
+
+
+dec_min_uni:
+    ld sec_uni, 9
+    ld sec_dez, 5
+    ld temp, 1
+    sub min_uni, temp
+    ret
+
+
+dec_min_dez:
+    ld sec_uni, 9
+    ld sec_dez, 5
+    ld min_uni, 9
+    ld temp, 1
+    sub min_dez, temp
+    ret
+
+
+draw_timer:
+    ld pos_y, 12
+
+    ld pos_x, 16
+    ld i, digit_0
+    se min_dez, 0
+    jp draw_min_dez_1
+    drw pos_x, pos_y, 5
+    jp draw_min_uni
+
+draw_min_dez_1:
+    ld i, digit_1
+    se min_dez, 1
+    jp draw_min_dez_2
+    drw pos_x, pos_y, 5
+    jp draw_min_uni
+
+draw_min_dez_2:
+    ld i, digit_2
+    drw pos_x, pos_y, 5
+
+
+draw_min_uni:
+    ld pos_x, 22
+    ld i, digit_0
+    se min_uni, 0
+    jp draw_min_uni_1
+    drw pos_x, pos_y, 5
+    jp draw_colon
+
+draw_min_uni_1:
+    ld i, digit_1
+    se min_uni, 1
+    jp draw_min_uni_2
+    drw pos_x, pos_y, 5
+    jp draw_colon
+
+draw_min_uni_2:
+    ld i, digit_2
+    se min_uni, 2
+    jp draw_min_uni_3
+    drw pos_x, pos_y, 5
+    jp draw_colon
+
+draw_min_uni_3:
+    ld i, digit_3
+    se min_uni, 3
+    jp draw_min_uni_4
+    drw pos_x, pos_y, 5
+    jp draw_colon
+
+draw_min_uni_4:
+    ld i, digit_4
+    se min_uni, 4
+    jp draw_min_uni_5
+    drw pos_x, pos_y, 5
+    jp draw_colon
+
+draw_min_uni_5:
+    ld i, digit_5
+    se min_uni, 5
+    jp draw_min_uni_6
+    drw pos_x, pos_y, 5
+    jp draw_colon
+
+draw_min_uni_6:
+    ld i, digit_6
+    se min_uni, 6
+    jp draw_min_uni_7
+    drw pos_x, pos_y, 5
+    jp draw_colon
+
+draw_min_uni_7:
+    ld i, digit_7
+    se min_uni, 7
+    jp draw_min_uni_8
+    drw pos_x, pos_y, 5
+    jp draw_colon
+
+draw_min_uni_8:
+    ld i, digit_8
+    se min_uni, 8
+    jp draw_min_uni_9
+    drw pos_x, pos_y, 5
+    jp draw_colon
+
+draw_min_uni_9:
+    ld i, digit_9
+    drw pos_x, pos_y, 5
+
+
+draw_colon:
+    ld pos_x, 28
+    ld i, colon_sprite
+    drw pos_x, pos_y, 5
+
+    ld pos_x, 34
+    ld i, digit_0
+    se sec_dez, 0
+    jp draw_sec_dez_1
+    drw pos_x, pos_y, 5
+    jp draw_sec_uni
+
+draw_sec_dez_1:
+    ld i, digit_1
+    se sec_dez, 1
+    jp draw_sec_dez_2
+    drw pos_x, pos_y, 5
+    jp draw_sec_uni
+
+draw_sec_dez_2:
+    ld i, digit_2
+    se sec_dez, 2
+    jp draw_sec_dez_3
+    drw pos_x, pos_y, 5
+    jp draw_sec_uni
+
+draw_sec_dez_3:
+    ld i, digit_3
+    se sec_dez, 3
+    jp draw_sec_dez_4
+    drw pos_x, pos_y, 5
+    jp draw_sec_uni
+
+draw_sec_dez_4:
+    ld i, digit_4
+    se sec_dez, 4
+    jp draw_sec_dez_5
+    drw pos_x, pos_y, 5
+    jp draw_sec_uni
+
+draw_sec_dez_5:
+    ld i, digit_5
+    drw pos_x, pos_y, 5
+
+
+draw_sec_uni:
+    ld pos_x, 40
+    ld i, digit_0
+    se sec_uni, 0
+    jp draw_sec_uni_1
+    drw pos_x, pos_y, 5
+    ret
+
+draw_sec_uni_1:
+    ld i, digit_1
+    se sec_uni, 1
+    jp draw_sec_uni_2
+    drw pos_x, pos_y, 5
+    ret
+
+draw_sec_uni_2:
+    ld i, digit_2
+    se sec_uni, 2
+    jp draw_sec_uni_3
+    drw pos_x, pos_y, 5
+    ret
+
+draw_sec_uni_3:
+    ld i, digit_3
+    se sec_uni, 3
+    jp draw_sec_uni_4
+    drw pos_x, pos_y, 5
+    ret
+
+draw_sec_uni_4:
+    ld i, digit_4
+    se sec_uni, 4
+    jp draw_sec_uni_5
+    drw pos_x, pos_y, 5
+    ret
+
+draw_sec_uni_5:
+    ld i, digit_5
+    se sec_uni, 5
+    jp draw_sec_uni_6
+    drw pos_x, pos_y, 5
+    ret
+
+draw_sec_uni_6:
+    ld i, digit_6
+    se sec_uni, 6
+    jp draw_sec_uni_7
+    drw pos_x, pos_y, 5
+    ret
+
+draw_sec_uni_7:
+    ld i, digit_7
+    se sec_uni, 7
+    jp draw_sec_uni_8
+    drw pos_x, pos_y, 5
+    ret
+
+draw_sec_uni_8:
+    ld i, digit_8
+    se sec_uni, 8
+    jp draw_sec_uni_9
+    drw pos_x, pos_y, 5
+    ret
+
+draw_sec_uni_9:
+    ld i, digit_9
+    drw pos_x, pos_y, 5
+    ret
+
+
+spr digit_0:
+    0xF0 0x90 0x90 0x90 0xF0
+
+spr digit_1:
+    0x20 0x60 0x20 0x20 0x70
+
+spr digit_2:
+    0xF0 0x10 0xF0 0x80 0xF0
+
+spr digit_3:
+    0xF0 0x10 0xF0 0x10 0xF0
+
+spr digit_4:
+    0x90 0x90 0xF0 0x10 0x10
+
+spr digit_5:
+    0xF0 0x80 0xF0 0x10 0xF0
+
+spr digit_6:
+    0xF0 0x80 0xF0 0x90 0xF0
+
+spr digit_7:
+    0xF0 0x10 0x20 0x40 0x40
+
+spr digit_8:
+    0xF0 0x90 0xF0 0x90 0xF0
+
+spr digit_9:
+    0xF0 0x90 0xF0 0x10 0xF0
+
+spr colon_sprite:
+    0x00 0x20 0x00 0x00 0x20

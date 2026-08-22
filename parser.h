@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define PDEBUG 1
+#define PDEBUG 0
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
